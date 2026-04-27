@@ -1,7 +1,3 @@
-#include <sys/types.h>
-#include <cpuid.h>
-#include <machine/atomic.h>
-#include <machine/cpufunc.h>
 #include <stdint.h>
 #include "main.h"
 #include "../include/config.h"

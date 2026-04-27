@@ -2,13 +2,6 @@
 #include "kernel_code.h"
 #include "utils.h"
 #include <stdint.h>
-typedef int32_t size_t;
-typedef int32_t cpusetid_t;
-typedef int cpuwhich_t;
-typedef int cpulevel_t;
-typedef int32_t id_t;
-#include <sys/_cpuset.h>
-#include <sys/cpuset.h>
 
 #define MSR_EFER 0xC0000080
 

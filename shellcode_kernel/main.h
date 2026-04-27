@@ -1,10 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 #include "shellcode_kernel_args.h"
-#include <stdarg.h>
 #include <stdint.h>
-#include <sys/_cpuset.h>
-#include <sys/_types.h>
 
 void (*printf)(const char *format, ...);
 uint32_t (*AcpiSetFirmwareWakingVector)(uint64_t PhysicalAddress,
