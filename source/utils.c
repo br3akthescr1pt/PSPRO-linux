@@ -225,8 +225,8 @@ void notify(const char *fmt, ...) {
   vsnprintf(buffer, sizeof(buffer), fmt, args);
   va_end(args);
 
-  notify_internal(buffer);
-  printf(buffer);
+  notify_internal((uint8_t *)buffer);
+  printf("%s", buffer);
 }
 
 void notify_internal(uint8_t *msg) {
@@ -236,7 +236,7 @@ void notify_internal(uint8_t *msg) {
   } req;
   bzero(&req, sizeof(req));
   uint64_t len =
-      strlen(msg) < (sizeof(req.msg) - 1) ? strlen(msg) : (sizeof(req.msg) - 1);
+      strlen((const char *)msg) < (sizeof(req.msg) - 1) ? strlen((const char *)msg) : (sizeof(req.msg) - 1);
   memcpy(req.msg, msg, len);
   sceKernelSendNotificationRequest(0, &req, sizeof(req), 0);
 }

@@ -19,7 +19,7 @@
 
 #define MINI_SYSCORE_PID 1
 
-static uint64_t alloc_page(void) {
+uint64_t alloc_page(void) {
 
   void *page = mmap(NULL, PAGE_SIZE, PROT_READ | PROT_WRITE,
                     MAP_SHARED | MAP_ANONYMOUS, -1, 0);
@@ -30,7 +30,7 @@ static uint64_t alloc_page(void) {
   return va_to_pa_user((uintptr_t)page);
 }
 
-static void install_page(uintptr_t pml4, vm_offset_t va, vm_paddr_t pa,
+void install_page(uintptr_t pml4, vm_offset_t va, vm_paddr_t pa,
                          int bits) {
   uint64_t entry;
 
@@ -100,7 +100,7 @@ long find_and_get_size_of_file(const char *filename, char *found_path) {
   return -1;
 }
 
-static int find_and_read_file(const char *filename, void *buf, size_t bufsize) {
+int find_and_read_file(const char *filename, void *buf, size_t bufsize) {
   char full_path[256];
   struct stat st;
 
@@ -119,7 +119,7 @@ static int find_and_read_file(const char *filename, void *buf, size_t bufsize) {
   return -1;
 }
 
-static int read_file(const char *path, void *buf, size_t bufsize) {
+int read_file(const char *path, void *buf, size_t bufsize) {
   int fd = open(path, O_RDONLY);
   if (fd < 0)
     return fd;
@@ -128,7 +128,7 @@ static int read_file(const char *path, void *buf, size_t bufsize) {
   return r;
 }
 
-static void trim_newline(char *s) {
+void trim_newline(char *s) {
   while (*s != '\0') {
     if (*s == '\r' || *s == '\n') {
       *s = '\0';

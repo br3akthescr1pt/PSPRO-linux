@@ -220,7 +220,7 @@ int stage5_remove_xotext(void) {
   uint64_t start =
       ktext - 0xF0000; // Include first pages where fun stuff is located
   uint64_t end = kdata;
-  int n = 0;
+  int n __attribute__((unused)) = 0;
 
   for (uint64_t a = start; a < end; a += 0x1000) {
     page_chain_set_rw(a);
