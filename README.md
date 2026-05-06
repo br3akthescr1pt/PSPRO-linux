@@ -173,19 +173,24 @@ Then, there are certain settings and commands we recommend doing:
 
 2. Possibly, you have to disable and reenable your Wired/WLAN connection to get internet connection.
 
-3. Install Firefox:
+3. Hold packages to prevent updating the kernel when doing `apt upgrade`:
+   ```bash
+   sudo apt-mark hold linux-generic linux-generic-hwe-24.04 linux-generic-hwe-26.04 linux-image-generic linux-image-generic-hwe-24.04 linux-image-generic-hwe-26.04 linux-headers-generic linux-headers-generic-hwe-24.04 linux-headers-generic-hwe-26.04
+   ```
+
+4. Install Firefox:
 
    ```bash
    sudo snap install firefox
    ```
 
-4. Update mesa:
+5. Update mesa:
 
    ```bash
    sudo snap refresh mesa-2404 --channel=latest/edge
    ```
 
-5. Clone our [ps5-linux-tools](https://github.com/ps5-linux/ps5-linux-tools):
+6. Clone our [ps5-linux-tools](https://github.com/ps5-linux/ps5-linux-tools):
 
    ```bash
    sudo apt install zlib1g-dev
@@ -207,9 +212,9 @@ cd ps5-linux-tools
 sudo ./m2_init
 ```
 
-3. Reboot via `sudo reboot`. If your PS5 asks you to format your M.2 again, please report this issue to us in our [Discord server](https://discord.gg/PeMGVB7BAm) and provide your M.2 model and storage size.
-4. Relaunch Linux on your PS5.
-5. Copy the `ps5-ubuntu2604.img` image that you built during installation or rebuild it on your PS5. Then, install it onto your M.2:
+4. Reboot via `sudo reboot`. If your PS5 asks you to format your M.2 again, please report this issue to us in our [Discord server](https://discord.gg/PeMGVB7BAm) and provide your M.2 model and storage size.
+5. Relaunch Linux on your PS5.
+6. Copy the `ps5-ubuntu2604.img` image that you built during installation or rebuild it on your PS5. Then, install it onto your M.2:
 
 ```bash
 cd ps5-linux-tools
