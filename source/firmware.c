@@ -171,6 +171,9 @@ static int resolve_ps5_wifi_firmware(void **initrd, size_t *initrd_size) {
   return 0;
 }
 
+//
+// Wrapper to resolve future firmwares images using the kernel, at the moment only Marvell WiFi driver
+//
 int resolve_device_firmwares(void **initrd, size_t *initrd_size) {
   return resolve_ps5_wifi_firmware(initrd, initrd_size);
 }
