@@ -5,8 +5,8 @@
 extern shellcode_hypervisor_args args;
 
 __attribute__((noinline, optimize("O0"))) uint32_t putc_uart(uint8_t tx_byte) {
-  volatile uint32_t *uart_tx = (volatile uint32_t *) 0xc1010104ULL;
-  volatile uint32_t *uart_busy = (volatile uint32_t *) 0xc101010cULL;
+  volatile uint32_t *uart_tx = (volatile uint32_t *)0xc1010104ULL;
+  volatile uint32_t *uart_busy = (volatile uint32_t *)0xc101010cULL;
   uint64_t timeout = 0xFFFFFFFF;
   do {
     timeout--;

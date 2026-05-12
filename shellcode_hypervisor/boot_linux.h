@@ -45,8 +45,4 @@
 void entry(void);
 void boot_linux(void);
 
-enum kit_type {
-    KIT_RETAIL,
-    KIT_TESTKIT,
-    KIT_DEVKIT
-};
+enum kit_type { KIT_RETAIL, KIT_TESTKIT, KIT_DEVKIT };

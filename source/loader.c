@@ -31,8 +31,7 @@ uint64_t alloc_page(void) {
   return va_to_pa_user((uintptr_t)page);
 }
 
-void install_page(uintptr_t pml4, vm_offset_t va, vm_paddr_t pa,
-                         int bits) {
+void install_page(uintptr_t pml4, vm_offset_t va, vm_paddr_t pa, int bits) {
   uint64_t entry;
 
   uintptr_t pml4e = pml4 + pmap_pml4e_index(va) * 8;
@@ -100,18 +99,21 @@ static const char *get_overridden_filename(const char *filename) {
         for (char *p = overrides_start; p < overrides_end; p++)
           if (*p == '\n')
             *p = 0;
-        overrides_start[size] = 0; // make sure the last string is null-terminated
+        overrides_start[size] =
+            0; // make sure the last string is null-terminated
       }
     }
   }
 
-  if (state == 1) // overrides not found, or unreadable, or currently looking for it
+  if (state ==
+      1) // overrides not found, or unreadable, or currently looking for it
     return filename;
 
   size_t needle_len = strlen(filename);
   for (const char *p = overrides_start; p < overrides_end;) {
     size_t haystack_len = strlen(p);
-    if (haystack_len > needle_len && !strncmp(p, filename, needle_len) && p[needle_len] == '=')
+    if (haystack_len > needle_len && !strncmp(p, filename, needle_len) &&
+        p[needle_len] == '=')
       return p + needle_len + 1;
     p += haystack_len + 1;
   }
@@ -229,7 +231,8 @@ int fetch_linux(struct linux_info *info) {
   }
 
   if (dump_device_firmwares(initrd_path) < 0) {
-    notify("Something went wrong while dumping device firmwares - Continuing\n");
+    notify(
+        "Something went wrong while dumping device firmwares - Continuing\n");
   }
 
   size_t vram_size;
@@ -266,7 +269,7 @@ int fetch_linux(struct linux_info *info) {
   info->initrd_size = initrd_size;
   info->vram_size = vram_size;
   strcpy(info->cmdline, cmdline);
-  info->kit_type = (int) get_kit_type();
+  info->kit_type = (int)get_kit_type();
 
   uint64_t page = alloc_page();
   kwrite(pa_to_dmap(page), info, sizeof(struct linux_info));

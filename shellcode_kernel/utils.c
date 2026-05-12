@@ -60,8 +60,8 @@ uint64_t va_to_pa_custom(uint64_t va, uint64_t cr3_custom) {
 
 __attribute__((noinline, optimize("O0"))) uint32_t putc_uart(uint64_t dmap,
                                                              uint8_t tx_byte) {
-  volatile uint32_t *uart_tx = (uint32_t *) (dmap + 0xc1010104ULL);
-  volatile uint32_t *uart_busy = (uint32_t *) (dmap + 0xc101010cULL);
+  volatile uint32_t *uart_tx = (uint32_t *)(dmap + 0xc1010104ULL);
+  volatile uint32_t *uart_busy = (uint32_t *)(dmap + 0xc101010cULL);
   uint64_t timeout = 0xFFFFFFFF;
   do {
     timeout--;

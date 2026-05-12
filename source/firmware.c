@@ -57,13 +57,13 @@ static int build_firmware_path(const char *boot_file_path, char *boot_dir,
   if (slash == NULL)
     return -1;
 
-  ret = snprintf(boot_dir, boot_dir_size, "%.*s",
-                 (int)(slash - boot_file_path), boot_file_path);
+  ret = snprintf(boot_dir, boot_dir_size, "%.*s", (int)(slash - boot_file_path),
+                 boot_file_path);
   if (ret < 0 || (size_t)ret >= boot_dir_size)
     return -1;
 
-  ret = snprintf(fw_path, fw_path_size, "%s/%s", boot_dir,
-                 PS5_WIFI_FW_BOOT_PATH);
+  ret =
+      snprintf(fw_path, fw_path_size, "%s/%s", boot_dir, PS5_WIFI_FW_BOOT_PATH);
   if (ret < 0 || (size_t)ret >= fw_path_size)
     return -1;
 

@@ -94,8 +94,7 @@ static void e820_memory_setup(struct boot_params *bp) {
   if (info.kit_type != KIT_DEVKIT) {
     append_e820_table(bp, 0x470000000, 0x47f300000, E820_TYPE_RAM);
     append_e820_table(bp, 0x47f300000, 0x480000000, E820_TYPE_RESERVED);
-  }
-  else {
+  } else {
     append_e820_table(bp, 0x470000000, 0x87f300000, E820_TYPE_RAM);
     append_e820_table(bp, 0x87f300000, 0x880000000, E820_TYPE_RESERVED);
   }
@@ -132,7 +131,6 @@ void boot_linux(void) {
   size_t kernel_size = shdr->syssize * 16;
 
   memcpy((void *)kernel_pa, (void *)(info.bzimage + setup_size), kernel_size);
-
 
   void (*startup_64)(uint64_t physaddr, struct boot_params *bp) =
       (void *)(kernel_pa + 0x200);

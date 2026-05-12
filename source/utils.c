@@ -5,8 +5,8 @@
 #include <sys/cpuset.h>
 #include <sys/param.h>
 #include <sys/proc.h>
-#include <unistd.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 /* Global Variables */
 offset_list env_offset;
@@ -219,7 +219,7 @@ void unpin(void) {
 }
 
 void notify(const char *fmt, ...) {
-  static char buffer[2048]; 
+  static char buffer[2048];
   va_list args;
 
   va_start(args, fmt);
@@ -236,8 +236,9 @@ void notify_internal(uint8_t *msg) {
     char msg[3075];
   } req;
   bzero(&req, sizeof(req));
-  uint64_t len =
-      strlen((const char *)msg) < (sizeof(req.msg) - 1) ? strlen((const char *)msg) : (sizeof(req.msg) - 1);
+  uint64_t len = strlen((const char *)msg) < (sizeof(req.msg) - 1)
+                     ? strlen((const char *)msg)
+                     : (sizeof(req.msg) - 1);
   memcpy(req.msg, msg, len);
   sceKernelSendNotificationRequest(0, &req, sizeof(req), 0);
 }
@@ -250,9 +251,8 @@ void enter_rest_mode(void) {
   sceKernelCloseEventFlag(&event);
 }
 
-
 // Kit type by EchoStretch
-bool if_exists(const char* path) {
+bool if_exists(const char *path) {
   struct stat st;
   return stat(path, &st) == 0;
 }

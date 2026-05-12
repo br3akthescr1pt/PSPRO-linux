@@ -1,8 +1,8 @@
-#include <stdint.h>
 #include "main.h"
 #include "../include/config.h"
 #include "boot_linux.h"
 #include "utils.h"
+#include <stdint.h>
 
 __attribute__((section(".entry_point"), naked)) uint32_t main(void) {
 

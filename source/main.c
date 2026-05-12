@@ -30,7 +30,8 @@ int main(void) {
     return -1;
   }
 
-  notify("Finished preparation. Going to rest mode in 5 seconds.\nPlease wait for the orange light to stop "
+  notify("Finished preparation. Going to rest mode in 5 seconds.\nPlease wait "
+         "for the orange light to stop "
          "blinking and then wakeup to Linux :)\n");
 
   sleep(5);
@@ -156,8 +157,9 @@ int prepare_resume(void) {
               dest_data, dest_text + offset, offset);
 
   uint64_t instr_to_patch =
-      ktext + env_offset.HOOK_ACPI_WAKEUP_MACHDEP; // AcpiSetFirmwareWakingVector
-                                                   // in acpi_wakeup_machdep
+      ktext +
+      env_offset.HOOK_ACPI_WAKEUP_MACHDEP; // AcpiSetFirmwareWakingVector
+                                           // in acpi_wakeup_machdep
   int64_t diff_call = dest_text - instr_to_patch;
   uint8_t new_instr[5];
   new_instr[0] = 0xE8; // Call Near

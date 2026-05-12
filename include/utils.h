@@ -9,10 +9,10 @@
 
 int sceKernelGetCurrentCpu();
 int sceKernelSendNotificationRequest(int, void *, size_t, int);
-int sceKernelOpenEventFlag(void*, const char *);
+int sceKernelOpenEventFlag(void *, const char *);
 int sceKernelNotifySystemSuspendStart(void);
 int sceKernelSetEventFlag(void *, int);
-int sceKernelCloseEventFlag(void*);
+int sceKernelCloseEventFlag(void *);
 
 typedef struct _sysent {
   uint32_t n_arg;
@@ -157,16 +157,11 @@ void enter_rest_mode(void);
 #define DEBUG_PRINT(fmt, ...)
 #endif
 
-
-bool if_exists(const char* path);
+bool if_exists(const char *path);
 bool sceKernelIsTestKit(void);
 bool sceKernelIsDevKit(void);
 
-enum kit_type {
-    KIT_RETAIL,
-    KIT_TESTKIT,
-    KIT_DEVKIT
-};
+enum kit_type { KIT_RETAIL, KIT_TESTKIT, KIT_DEVKIT };
 
 enum kit_type get_kit_type(void);
 
