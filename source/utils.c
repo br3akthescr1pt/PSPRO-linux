@@ -61,7 +61,7 @@ int init_global_vars(void) {
   kdata = KERNEL_ADDRESS_DATA_BASE;
 
   flat_pmap kernel_pmap;
-  kread(ktext + env_offset.PMAP_STORE, &kernel_pmap, sizeof(kernel_pmap));
+  kread(getpmap(kernel_get_proc(0)), &kernel_pmap, sizeof(kernel_pmap));
   if (kernel_pmap.pm_pml4 == 0 || kernel_pmap.pm_cr3 == 0)
     return -1;
 
