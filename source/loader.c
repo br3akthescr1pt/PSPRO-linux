@@ -3,21 +3,11 @@
 #include "firmware.h"
 #include "linux.h"
 #include "utils.h"
-#include <errno.h>
 #include <fcntl.h>
-#include <netinet/in.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <sys/cpuset.h>
 #include <sys/mman.h>
-#include <sys/param.h>
-#include <sys/proc.h>
-#include <sys/socket.h>
 #include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
 
 const char *file_paths[] = {
     "/mnt/usb0/",           "/mnt/usb1/",           "/mnt/usb2/",
@@ -45,14 +35,14 @@ static const char *get_overridden_filename(const char *filename) {
         for (char *p = overrides_start; p < overrides_end; p++)
           if (*p == '\n')
             *p = 0;
-        overrides_start[size] =
-            0; // make sure the last string is null-terminated
+        // make sure the last string is null-terminated
+        overrides_start[size] = 0;
       }
     }
   }
 
-  if (state ==
-      1) // overrides not found, or unreadable, or currently looking for it
+  // overrides not found, or unreadable, or currently looking for it
+  if (state == 1)
     return filename;
 
   size_t needle_len = strlen(filename);
@@ -208,8 +198,8 @@ int fetch_linux(struct linux_info *info) {
   info->initrd = kernel_cave_bzImage + ALIGN_UP(bzimage_size, PAGE_SIZE);
   info->initrd_size = initrd_size;
   info->vram_size = vram_size;
-  strcpy(info->cmdline, cmdline);
   info->kit_type = (int)get_kit_type();
+  strcpy(info->cmdline, cmdline);
 
   uint64_t page = alloc_page();
   kwrite(pa_to_dmap(page), info, sizeof(struct linux_info));

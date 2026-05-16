@@ -1,5 +1,6 @@
 #include "utils.h"
 #include "shellcode_kernel_args.h"
+#include <cpuid.h>
 
 extern shellcode_kernel_args args;
 
@@ -98,9 +99,10 @@ void init_global_pointers(volatile shellcode_kernel_args *args_ptr) {
   memcpy(&args, (void *)args_ptr, sizeof(args));
 
   printf = (void (*)(const char *, ...))args.fun_printf;
-  smp_rendezvous = (void (*)(void (*)(void), void (*)(void), void (*)(void),
-                             void *))args.fun_smp_rendezvous;
-  smp_no_rendevous_barrier = (void (*)(void))args.fun_smp_no_rendevous_barrier;
+  smp_rendezvous = (void (*)(void (*)(void *), void (*)(void *),
+                             void (*)(void *), void *))args.fun_smp_rendezvous;
+  smp_no_rendevous_barrier =
+      (void (*)(void *))args.fun_smp_no_rendevous_barrier;
 
   transmitter_control = (int (*)(int, void *))args.fun_transmitter_control;
   mp3_initialize = (int (*)(int))args.fun_mp3_initialize;
@@ -108,7 +110,14 @@ void init_global_pointers(volatile shellcode_kernel_args *args_ptr) {
   g_vbios = args.g_vbios;
 }
 
-void vmmcall_dummy(void) {
+uint8_t get_cpu(void) {
+  uint32_t eax, ebx, ecx, edx;
+  __get_cpuid(1, &eax, &ebx, &ecx, &edx);
+  uint8_t cpu_id = (ebx >> 24) & 0xFF;
+  return cpu_id;
+}
+
+void vmmcall_dummy(void *) {
   __asm__ volatile("mov $0x1, %rax \n"
                    "vmmcall \n"
                    "ret \n");

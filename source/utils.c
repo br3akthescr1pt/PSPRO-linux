@@ -1,14 +1,11 @@
 #include "utils.h"
 #include "linux.h"
 #include "offsets.h"
-#include <ps5/kernel.h>
 #include <stdio.h>
 #include <sys/cpuset.h>
 #include <sys/mman.h>
 #include <sys/param.h>
-#include <sys/proc.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 /* Global Variables */
 offset_list env_offset;

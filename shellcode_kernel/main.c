@@ -1,9 +1,8 @@
 #include "main.h"
 #include "boot_linux.h"
-#include "exploit_0304.h"
+#include "hv_defeat_0304.h"
 #include "utils.h"
 #include <stddef.h>
-#include <stdint.h>
 
 shellcode_kernel_args args = {0};
 
@@ -26,7 +25,7 @@ __attribute__((section(".entry_point"))) uint32_t main(uint64_t add1,
   activate_uart(args_ptr);
 
   if ((0x0300 <= args_ptr->fw_version) && (args_ptr->fw_version < 0x0500)) {
-    if (disable_npts_0304(args_ptr))
+    if (hv_defeat_0304(args_ptr))
       return -1;
     // Now we can R/W on .text
     init_global_pointers(args_ptr);

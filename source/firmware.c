@@ -2,11 +2,8 @@
 #include "utils.h"
 #include <errno.h>
 #include <fcntl.h>
-#include <stdint.h>
 #include <stdio.h>
-#include <string.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 #define PS5_WIFI_FW_BOOT_PATH "lib/nxp/pcieuartiw620_combo_v1.bin"
 

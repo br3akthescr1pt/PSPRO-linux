@@ -5,7 +5,6 @@
 #include "offsets.h"
 #include <ps5/kernel.h>
 #include <stdarg.h>
-#include <stdint.h>
 #include <string.h>
 
 int sceKernelGetCurrentCpu();

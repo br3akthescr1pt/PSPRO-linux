@@ -18,9 +18,7 @@
 #define hv_stack_size 0x1000ULL
 
 // This is used as transitional storage from ProsperoOS to Kernel shellcode
-#define kernel_cave 0xFFFF800000000000
-#define kernel_cave_arguments kernel_cave
-#define kernel_cave_files kernel_cave_arguments + PAGE_SIZE
+#define kernel_cave_files 0xFFFF800000000000
 #define kernel_cave_linux_info kernel_cave_files
 #define kernel_cave_bzImage kernel_cave_linux_info + PAGE_SIZE
 

@@ -2,11 +2,11 @@
 #define MSR_EFER 0xc0000080
 #define EFER_SVM (1ULL << 12) // Bit 12: Secure Virtual Machine Enable
 
-// // Virtual Machine Control Register (VM_CR)
+// Virtual Machine Control Register (VM_CR)
 #define MSR_VM_CR 0xc0010114
 #define VM_CR_R_INIT (1ULL << 1) // Bit 1: Intercept INIT
 
-// // MTRRs (Memory Type Range Registers)
+// MTRRs (Memory Type Range Registers)
 #define MSR_MTRR4kBase 0x00000268
 #define MSR_MTRRVarBase 0x00000200
 

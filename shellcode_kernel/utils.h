@@ -2,13 +2,12 @@
 #define UTILS_H
 #include "boot_linux.h"
 #include "shellcode_kernel_args.h"
-#include <stdint.h>
 
 extern void (*printf)(const char *format, ...);
-extern void (*smp_rendezvous)(void (*setup_func)(void),
-                              void (*action_func)(void),
-                              void (*teardown_func)(void), void *arg);
-extern void (*smp_no_rendevous_barrier)(void);
+extern void (*smp_rendezvous)(void (*setup_func)(void *),
+                              void (*action_func)(void *),
+                              void (*teardown_func)(void *), void *arg);
+extern void (*smp_no_rendevous_barrier)(void *);
 extern int (*transmitter_control)(int cmd, void *control);
 extern int (*mp3_initialize)(int vmid);
 extern int (*mp3_invoke)(int cmd_id, void *req, void *rsp);
@@ -52,5 +51,7 @@ int puts_uart(uint64_t dmap, const uint8_t *msg);
 void activate_uart(volatile shellcode_kernel_args *args_ptr);
 void halt(void);
 void init_global_pointers(volatile shellcode_kernel_args *args_ptr);
-void vmmcall_dummy(void);
+uint8_t get_cpu(void);
+void vmmcall_dummy(void *);
+
 #endif

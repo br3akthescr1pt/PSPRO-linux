@@ -1,6 +1,5 @@
 #include "iommu.h"
 #include "utils.h"
-#include <stdio.h>
 #include <string.h>
 
 iommu_ctx iommu_store;

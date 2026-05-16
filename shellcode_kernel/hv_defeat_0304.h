@@ -1,5 +1,5 @@
-#ifndef EXPLOIT_0304_H
-#define EXPLOIT_0304_H
+#ifndef HV_DEFEAT_0304_H
+#define HV_DEFEAT_0304_H
 #include "shellcode_kernel_args.h"
 
 extern uint32_t (*hv_iommu_set_buffers)(uint64_t cb2_pa, uint64_t cb3_pa,
@@ -7,7 +7,7 @@ extern uint32_t (*hv_iommu_set_buffers)(uint64_t cb2_pa, uint64_t cb3_pa,
                                         int *n_devices);
 extern uint32_t (*hv_iommu_wait_completion)(void);
 
-int disable_npts_0304(volatile shellcode_kernel_args *args_ptr);
+int hv_defeat_0304(volatile shellcode_kernel_args *args_ptr);
 void patch_hv_0304(void);
 
 // tmr via ecam b0d18f2

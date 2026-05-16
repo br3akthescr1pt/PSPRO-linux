@@ -18,21 +18,6 @@ __attribute__((noinline, optimize("O0"))) uint32_t putc_uart(uint8_t tx_byte) {
   return 0;
 }
 
-// Variable for val to hex
-uint8_t hex_val[17];
-
-__attribute__((noinline, optimize("O0"))) uint8_t *
-u64_to_hex_custom(uint64_t val, uint8_t *dest) {
-  const uint8_t hex_chars[] = "0123456789abcdef";
-  dest[16] = '\0';
-
-  for (int i = 15; i >= 0; i--) {
-    dest[i] = hex_chars[val & 0xf];
-    val >>= 4;
-  }
-  return dest;
-}
-
 __attribute__((noinline, optimize("O0"))) int printf(const uint8_t *msg) {
   uint32_t max = 255;
   int ret = 0;

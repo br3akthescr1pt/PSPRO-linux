@@ -3,7 +3,6 @@
 #include "../include/linux.h"
 #include "utils.h"
 #include <stddef.h>
-#include <stdint.h>
 
 static struct linux_info info;
 

@@ -1,7 +1,6 @@
 #include "../include/config.h"
 #include "boot_linux.h"
 #include "utils.h"
-#include <stdint.h>
 
 __attribute__((section(".entry_point"), naked)) uint32_t main(void) {
   // We enter this function after CR3 was updated to 1:1 mapping
