@@ -16,25 +16,27 @@ jobs:
 
     - name: Download PS5 Payload SDK
       run: |
-        sudo wget -O /tmp/ps5-payload-sdk.zip \
+        sudo wget -O /tmp/sdk.zip \
         https://github.com/ps5-payload-dev/sdk/releases/download/v0.34/ps5-payload-sdk.zip
 
-        sudo unzip /tmp/ps5-payload-sdk.zip -d /opt
+        sudo unzip /tmp/sdk.zip -d /opt
 
-    - name: Clone PSPRO-linux
+    - name: Clone repo
       run: |
-        git clone https://github.com/br3akthescr1pt/PSPRO-linux
-        cd PSPRO-linux
+        git clone https://github.com/br3akthescr1pt/PSPRO-linux repo
 
-    - name: Build PSPRO-linux
+    - name: Build
       run: |
-        cd PSPRO-linux
+        cd repo
         export PS5_PAYLOAD_SDK=/opt/ps5-payload-sdk
         make
 
-    - name: Upload ELF
+    - name: Show output (debug)
+      run: |
+        ls -R repo
+
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: PSPRO-linux-build
-        path: PSPRO-linux/*.elf
-        
+        path: repo/**/*.elf
