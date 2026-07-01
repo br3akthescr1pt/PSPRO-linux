@@ -35,6 +35,9 @@ static uint64_t get_hv_stack(void) {
   if (fw == 0x0650) {
     return 0x628d0000;
   }
+  if (fw == 0x0940) {
+    return 0x628ec000;
+  }
   return -1;
 }
 
