@@ -28,21 +28,21 @@ int main(void) {
   if ((0x0300 <= fw) && (fw < 0x0500)) {
     if (hv_defeat_0304(shellcode_kernel, shellcode_kernel_len))
       goto err;
+
   } else if ((0x0500 <= fw) && (fw < 0x0650)) {
     if (hv_defeat_0506(shellcode_kernel, shellcode_kernel_len))
       goto err;
+
   } else if ((0x0650 <= fw) && (fw < 0x1000)) {
     if (hv_defeat_0607(shellcode_kernel, shellcode_kernel_len))
-        goto err;
-  }
+      goto err;
 
   } else {
     goto err;
   }
 
   notify("Finished preparation. Going to rest mode in 5 seconds.\nPlease wait "
-         "for the orange light to stop "
-         "blinking and then wakeup to Linux :)\n");
+         "for the orange light to stop blinking and then wakeup to Linux :)\n");
 
   sleep(5);
   enter_rest_mode();
@@ -54,7 +54,5 @@ int main(void) {
   return 0;
 
 err:
-  notify("Something went wrong while defeating Hypervisor.\nPlease make sure "
-         "your fw is supported.");
   return -1;
 }
