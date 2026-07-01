@@ -29,11 +29,15 @@
 __attribute__((section(".entry_point"), naked)) uint32_t main(void) {
   volatile int fw_version = 0x11AA11AA; // To be updated by loader
 
-  uint64_t hv_pml4 = *(uint64_t *) (fw_version==0x0650 ? HV_PML4_0650 : HV_PML4_07xx);
-  uint64_t hv_base = fw_version==0x0650 ? (*(uint64_t *) HV_ENTRY_0650 - HV_MAIN_0650) : (*(uint64_t *) HV_ENTRY_07xx - HV_MAIN_07xx);
+  uint64_t hv_pml4 =
+      *(uint64_t *)(fw_version == 0x0650 ? HV_PML4_0650 : HV_PML4_07xx);
+  uint64_t hv_base = fw_version == 0x0650
+                         ? (*(uint64_t *)HV_ENTRY_0650 - HV_MAIN_0650)
+                         : (*(uint64_t *)HV_ENTRY_07xx - HV_MAIN_07xx);
 
-  uintptr_t *g_vm_tab =
-      (uintptr_t *)vtophys_custom(hv_base + (fw_version==0x0650 ? G_VM_TAB_0650 : G_VM_TAB_07xx), hv_pml4);
+  uintptr_t *g_vm_tab = (uintptr_t *)vtophys_custom(
+      hv_base + (fw_version == 0x0650 ? G_VM_TAB_0650 : G_VM_TAB_07xx),
+      hv_pml4);
   for (int i = 0; i < 16; i++) {
     uintptr_t vc = vtophys_custom(g_vm_tab[i], hv_pml4);
     uintptr_t vmcb = vtophys_custom(*(uintptr_t *)(vc + 0x08), hv_pml4);
@@ -52,10 +56,15 @@ __attribute__((section(".entry_point"), naked)) uint32_t main(void) {
   wrmsr(MSR_APICBASE, DEFAULT_APIC_BASE | APICBASE_ENABLED | APICBASE_BSP);
 
   // Restore gs base.
-  wrmsr(MSR_GSBASE, ((uint64_t *) (fw_version==0x0650 ? HV_STACK_TABLE_0650 : HV_STACK_TABLE_07xx) )[0] + 0x1000);
+  wrmsr(MSR_GSBASE,
+        ((uint64_t *)(fw_version == 0x0650 ? HV_STACK_TABLE_0650
+                                           : HV_STACK_TABLE_07xx))[0] +
+            0x1000);
 
   // Reenter hypercore.
-  void (*hv_reenter_hypercore)(void) = (void *) (fw_version==0x0650 ? HV_REENTER_HYPERCORE_0650 : HV_REENTER_HYPERCORE_07xx) ;
+  void (*hv_reenter_hypercore)(void) =
+      (void *)(fw_version == 0x0650 ? HV_REENTER_HYPERCORE_0650
+                                    : HV_REENTER_HYPERCORE_07xx);
   hv_reenter_hypercore();
   while (1)
     ;

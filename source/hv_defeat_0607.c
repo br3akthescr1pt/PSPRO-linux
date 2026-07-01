@@ -110,7 +110,8 @@ int hv_defeat_0607(void *shellcode_kernel, size_t shellcode_kernel_len) {
            PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
   memcpy(shellcode_0607, shellcode_0607_bin, shellcode_0607_bin_len);
 
-  if(update_sc_fw_version((uint64_t) shellcode_0607)) return -1;
+  if (update_sc_fw_version((uint64_t)shellcode_0607))
+    return -1;
 
   for (int i = 0; i < shellcode_0607_bin_len; i += PAGE_SIZE) {
     install_page_syscore(kernel_cave_shellcode_0761 + i,
